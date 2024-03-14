@@ -10,6 +10,6 @@ const int &GraphNode::getId() const { return id_; }
 
 const std::string &GraphNode::getCode() const { return code_; }
 
-const std::vector<Pipeline> &GraphNode::getPipes() const {
-    return pipes_;
-}
+const std::vector<Pipeline*> &GraphNode::getPipes() const { return pipes_; }
+
+void GraphNode::addPipe(Pipeline* pipe){ pipes_.push_back(pipe); }

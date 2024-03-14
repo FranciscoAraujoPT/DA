@@ -9,13 +9,13 @@
 #include "GraphNode.h"
 
 class WaterReservoir : public GraphNode {
-public:
-    WaterReservoir(const std::string &name, const std::string &municipality, int id, const std::string &code, double maxDelivery);
+    public:
+        WaterReservoir(const std::string &name, const std::string &municipality, int id, const std::string &code, double maxDelivery);
 
-private:
-    std::string name;
-    std::string municipality;
-    double maxDelivery;
+    private:
+        std::string name;
+        std::string municipality;
+        double maxDelivery;
 };
 
 #endif //DA_WATERRESERVOIR_H

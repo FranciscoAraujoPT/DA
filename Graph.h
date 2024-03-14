@@ -15,27 +15,45 @@
 class Graph {
     public:
         ~Graph() {
-            for (auto vertex : vertices)
-                removeVertex(vertex);
+            for (GraphNode* vertex : vertices){
+                for (Pipeline* pipe : vertex->getPipes()){
+                    delete pipe;
+                }
+                delete vertex;
+            }
         }
-
-        void addVertex(GraphNode data) {
-            vertices.push_back(&data);
+        void addVertex(GraphNode* data) {
+            vertices.push_back(data);
         }
-        void removeVertex(GraphNode* vertex) {
-            vertices.erase(std::remove(vertices.begin(), vertices.end(), vertex), vertices.end());
-            for (auto edge : pipes)
-                removePipe(edge);
-            delete vertex;
-        }
-        std::vector<GraphNode*> getAllVertex() {
+        std::vector<GraphNode *> getAllVertex() {
             return vertices;
         }
         void addPipe(const std::string& source, const std::string& destination, double capacity, bool direction) {
-            //TODO
+            GraphNode* s = findVertexByCode(source);
+            GraphNode* d = findVertexByCode(destination);
+            if(s != nullptr && d != nullptr){
+                auto *pipe = new Pipeline(s, d, capacity, direction);
+                if(!direction){
+                    d->addPipe(pipe);
+                }
+                s->addPipe(pipe);
+                pipes.push_back(pipe);
+            }
         }
-        void removePipe(Pipeline* pipe) {
-            //TODO
+        std::vector<Pipeline *> getAllPipes() {
+            return pipes;
+        }
+        GraphNode* findVertexByCode(const std::string& code) const {
+            for (auto v : vertices)
+                if (v->getCode() == code)
+                    return v;
+            return nullptr;
+        }
+        Pipeline* findPipeBySourceAndDest(GraphNode* source, GraphNode* destination) const {
+            for (auto pipe : pipes)
+                if (pipe->getSource() == source && pipe->getDestination() == destination)
+                    return pipe;
+            return nullptr;
         }
     private:
         std::vector<GraphNode*> vertices;

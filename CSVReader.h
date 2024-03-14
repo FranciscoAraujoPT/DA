@@ -20,13 +20,14 @@
 class CSVReader {
 private:
     std::string filename;
+    char delimiter;
 public:
-    explicit CSVReader(std::string  filename);
+    explicit CSVReader(std::string  filename, char delimiter = ',');
 
-    void readReservoirData(Graph& graph);
-    void readPipesData(Graph& graph);
-    void readCitiesData(Graph& graph);
-    void readStationsData(Graph& graph);
+    void readReservoirData(Graph* graph);
+    void readPipesData(Graph* graph);
+    void readCitiesData(Graph* graph);
+    void readStationsData(Graph* graph);
 };
 
 #endif //DA_CSVREADER_H

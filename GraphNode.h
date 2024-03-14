@@ -12,18 +12,17 @@
 #include "Pipeline.h"
 
 class GraphNode {
-public:
-    GraphNode(int id, std::string  code);
-    virtual ~GraphNode() = default;
-    const int& getId() const;
-    const std::string& getCode() const;
-    const std::vector<Pipeline>& getPipes() const;
+    public:
+        GraphNode(int id, std::string  code);
+        const int& getId() const;
+        const std::string& getCode() const;
+        const std::vector<Pipeline*>& getPipes() const;
+        void addPipe(Pipeline* pipe);
 
-
-protected:
-    int id_;
-    std::string code_;
-    std::vector<Pipeline> pipes_;
+    private:
+        int id_;
+        std::string code_;
+        std::vector<Pipeline*> pipes_;
 };
 
 #endif //DA_GRAPHNODE_H

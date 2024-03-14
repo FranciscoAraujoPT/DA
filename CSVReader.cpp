@@ -4,9 +4,9 @@
 
 #include "CSVReader.h"
 
-CSVReader::CSVReader(std::string filename):filename(std::move(filename)) {}
+CSVReader::CSVReader(std::string filename, char delimiter):filename(std::move(filename)), delimiter(delimiter){}
 
-void CSVReader::readReservoirData(Graph& graph) {
+void CSVReader::readReservoirData(Graph* graph) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error: Unable to open file " << filename << std::endl;
@@ -25,25 +25,25 @@ void CSVReader::readReservoirData(Graph& graph) {
         int id;
         double maxDelivery;
         // Assuming the last two columns are empty and ignored
-        if (std::getline(ss, reservoirName, ',') &&
-            std::getline(ss, municipality, ',') &&
-            std::getline(ss, idStr, ',') && // Read the ID as string
-            std::getline(ss, code, ',') &&
-            std::getline(ss, maxDeliveryStr, ',')) {
+        if (std::getline(ss, reservoirName, delimiter) &&
+            std::getline(ss, municipality, delimiter) &&
+            std::getline(ss, idStr, delimiter) && // Read the ID as string
+            std::getline(ss, code, delimiter) &&
+            std::getline(ss, maxDeliveryStr, delimiter)) {
             // Convert the ID from string to integer
             try {
                 id = std::stoi(idStr);
             } catch (const std::invalid_argument& e) {
-                std::cerr << "Invalid ID format in reservoir: " << idStr << std::endl;
+                std::cerr << "Invalid ID format in reservoir: " << line << std::endl;
                 continue; // Skip this line if ID is not a valid integer
             }
             try {
                 maxDelivery = std::stoi(maxDeliveryStr);
             } catch (const std::invalid_argument& e) {
-                std::cerr << "Invalid max delivery format in reservoir: " << idStr << std::endl;
+                std::cerr << "Invalid max delivery format in reservoir: " << line << std::endl;
                 continue; // Skip this line if max delivery is not a valid integer
             }
-            graph.addVertex(WaterReservoir(reservoirName, municipality, id, code, maxDelivery));
+            graph->addVertex(new WaterReservoir(reservoirName, municipality, id, code, maxDelivery));
         }
 
     }
@@ -51,7 +51,7 @@ void CSVReader::readReservoirData(Graph& graph) {
     file.close();
 }
 
-void CSVReader::readCitiesData(Graph& graph) {
+void CSVReader::readCitiesData(Graph* graph) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error: Unable to open file " << filename << std::endl;
@@ -66,44 +66,43 @@ void CSVReader::readCitiesData(Graph& graph) {
     std::string line;
     while (std::getline(file, line)) {
         std::stringstream ss(line);
-        std::string cityName, code, idStr, demandStr, populationStr2, populationStr1;
-        int id, population;
-        double demand;
+        std::string cityName, code, idStr, demandStr, populationStr;
+        int id;
+        double demand, population;
         // Assuming the last column is not needed
-        if (std::getline(ss, cityName, ',') &&
-            std::getline(ss, idStr, ',') &&
-            std::getline(ss, code, ',') &&
-            std::getline(ss, demandStr, ',') &&
-            std::getline(ss, populationStr1, ',') &&
-            std::getline(ss, populationStr2, ',')) {
+        if (std::getline(ss, cityName, delimiter) &&
+            std::getline(ss, idStr, delimiter) &&
+            std::getline(ss, code, delimiter) &&
+            std::getline(ss, demandStr, delimiter) &&
+            std::getline(ss, populationStr, '\r')){
             try {
                 id = std::stoi(idStr);
             } catch (const std::invalid_argument& e) {
-                std::cerr << "Invalid ID format in Delivery sites: " << idStr << std::endl;
+                std::cerr << "Invalid ID format in Delivery sites: " << line << std::endl;
                 continue; // Skip this line if ID is not a valid integer
             }
             try {
                 demand = std::stoi(demandStr);
             } catch (const std::invalid_argument& e) {
-                std::cerr << "Invalid demand format in Delivery sites: " << demandStr << std::endl;
+                std::cerr << "Invalid demand format in Delivery sites: " << line << std::endl;
                 continue; // Skip this line if demand is not a valid integer
             }
             try {
-                std::string populationStr = populationStr1.erase(0, 1) + populationStr2.erase(populationStr2.size() - 1);
+                populationStr.erase(std::remove(populationStr.begin(), populationStr.end(), '"'), populationStr.end());
+                populationStr.erase(std::remove(populationStr.begin(), populationStr.end(), ','), populationStr.end());
                 population = std::stod(populationStr);
             } catch (const std::invalid_argument& e) {
-                std::cerr << "Invalid population format in Delivery sites: " << populationStr1 + populationStr2 << std::endl;
+                std::cerr << "Invalid population format in Delivery sites: " << line << std::endl;
                 continue; // Skip this line if population is not a valid double
             }
-
-            graph.addVertex(DeliverySite(cityName, id, code, demand, population));
+            graph->addVertex(new DeliverySite(cityName, id, code, demand, population));
         }
     }
 
     file.close();
 }
 
-void CSVReader::readStationsData(Graph& graph) {
+void CSVReader::readStationsData(Graph* graph) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error: Unable to open file " << filename << std::endl;
@@ -121,14 +120,14 @@ void CSVReader::readStationsData(Graph& graph) {
         std::string code, idStr;
         int id;
         // Assuming the last column is not needed
-        if (std::getline(ss, idStr, ',') && std::getline(ss, code, ',')) {
+        if (std::getline(ss, idStr, delimiter) && std::getline(ss, code, delimiter)) {
             try {
                 id = std::stoi(idStr);
             } catch (const std::invalid_argument& e) {
-                std::cerr << "Invalid ID format in Stations: " << idStr << std::endl;
+                std::cerr << "Invalid ID format in Stations: " << line << std::endl;
                 continue; // Skip this line if ID is not a valid integer
             }
-            graph.addVertex(PumpingStation(id, code));
+            graph->addVertex(new PumpingStation(id, code));
         }
     }
 
@@ -136,7 +135,7 @@ void CSVReader::readStationsData(Graph& graph) {
 }
 
 
-void CSVReader::readPipesData(Graph& graph) {
+void CSVReader::readPipesData(Graph* graph) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error: Unable to open file " << filename << std::endl;
@@ -155,23 +154,23 @@ void CSVReader::readPipesData(Graph& graph) {
         double capacity;
         bool direction;
         // Assuming the last column is not needed
-        if (std::getline(ss, source, ',') &&
-            std::getline(ss, destination, ',') &&
-            std::getline(ss, capacityStr, ',') &&
-            std::getline(ss, directionStr, ',')) {
+        if (std::getline(ss, source, delimiter) &&
+            std::getline(ss, destination, delimiter) &&
+            std::getline(ss, capacityStr, delimiter) &&
+            std::getline(ss, directionStr, delimiter)) {
             try {
                 capacity = std::stoi(capacityStr);
             } catch (const std::invalid_argument& e) {
-                std::cerr << "Invalid capacity format in Pipes: " << capacityStr << std::endl;
+                std::cerr << "Invalid capacity format in Pipes: " << line << std::endl;
                 continue; // Skip this line if capacity is not a valid integer
             }
             try {
                 direction = std::stoi(directionStr);
             } catch (const std::invalid_argument& e) {
-                std::cerr << "Invalid direction format in Pipes: " << directionStr << std::endl;
+                std::cerr << "Invalid direction format in Pipes: " << line << std::endl;
                 continue; // Skip this line if direction is not a valid integer
             }
-            graph.addPipe(source, destination, capacity, direction);
+            graph->addPipe(source, destination, capacity, direction);
         }
     }
 
