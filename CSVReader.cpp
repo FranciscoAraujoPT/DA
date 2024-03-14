@@ -29,15 +29,19 @@ void CSVReader::readReservoirData(Graph* graph) {
             std::getline(ss, municipality, delimiter) &&
             std::getline(ss, idStr, delimiter) && // Read the ID as string
             std::getline(ss, code, delimiter) &&
-            std::getline(ss, maxDeliveryStr, delimiter)) {
+            std::getline(ss, maxDeliveryStr, '\r')) {
             // Convert the ID from string to integer
             try {
+                idStr.erase(std::remove(idStr.begin(), idStr.end(), '"'), idStr.end());
+                idStr.erase(std::remove(idStr.begin(), idStr.end(), ','), idStr.end());
                 id = std::stoi(idStr);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Invalid ID format in reservoir: " << line << std::endl;
                 continue; // Skip this line if ID is not a valid integer
             }
             try {
+                maxDeliveryStr.erase(std::remove(maxDeliveryStr.begin(), maxDeliveryStr.end(), '"'), maxDeliveryStr.end());
+                maxDeliveryStr.erase(std::remove(maxDeliveryStr.begin(), maxDeliveryStr.end(), ','), maxDeliveryStr.end());
                 maxDelivery = std::stoi(maxDeliveryStr);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Invalid max delivery format in reservoir: " << line << std::endl;
@@ -76,12 +80,16 @@ void CSVReader::readCitiesData(Graph* graph) {
             std::getline(ss, demandStr, delimiter) &&
             std::getline(ss, populationStr, '\r')){
             try {
+                idStr.erase(std::remove(idStr.begin(), idStr.end(), '"'), idStr.end());
+                idStr.erase(std::remove(idStr.begin(), idStr.end(), ','), idStr.end());
                 id = std::stoi(idStr);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Invalid ID format in Delivery sites: " << line << std::endl;
                 continue; // Skip this line if ID is not a valid integer
             }
             try {
+                demandStr.erase(std::remove(demandStr.begin(), demandStr.end(), '"'), demandStr.end());
+                demandStr.erase(std::remove(demandStr.begin(), demandStr.end(), ','), demandStr.end());
                 demand = std::stoi(demandStr);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Invalid demand format in Delivery sites: " << line << std::endl;
@@ -119,14 +127,17 @@ void CSVReader::readStationsData(Graph* graph) {
         std::stringstream ss(line);
         std::string code, idStr;
         int id;
-        // Assuming the last column is not needed
-        if (std::getline(ss, idStr, delimiter) && std::getline(ss, code, delimiter)) {
+        if (std::getline(ss, idStr, delimiter) && std::getline(ss, code, '\r')) {
             try {
+                idStr.erase(std::remove(idStr.begin(), idStr.end(), '"'), idStr.end());
+                idStr.erase(std::remove(idStr.begin(), idStr.end(), ','), idStr.end());
                 id = std::stoi(idStr);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Invalid ID format in Stations: " << line << std::endl;
                 continue; // Skip this line if ID is not a valid integer
             }
+            code.erase(std::remove(code.begin(), code.end(), '"'), code.end());
+            code.erase(std::remove(code.begin(), code.end(), ','), code.end());
             graph->addVertex(new PumpingStation(id, code));
         }
     }
@@ -157,14 +168,18 @@ void CSVReader::readPipesData(Graph* graph) {
         if (std::getline(ss, source, delimiter) &&
             std::getline(ss, destination, delimiter) &&
             std::getline(ss, capacityStr, delimiter) &&
-            std::getline(ss, directionStr, delimiter)) {
+            std::getline(ss, directionStr, '\r')) {
             try {
+                capacityStr.erase(std::remove(capacityStr.begin(), capacityStr.end(), '"'), capacityStr.end());
+                capacityStr.erase(std::remove(capacityStr.begin(), capacityStr.end(), ','), capacityStr.end());
                 capacity = std::stoi(capacityStr);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Invalid capacity format in Pipes: " << line << std::endl;
                 continue; // Skip this line if capacity is not a valid integer
             }
             try {
+                directionStr.erase(std::remove(directionStr.begin(), directionStr.end(), '"'), directionStr.end());
+                directionStr.erase(std::remove(directionStr.begin(), directionStr.end(), ','), directionStr.end());
                 direction = std::stoi(directionStr);
             } catch (const std::invalid_argument& e) {
                 std::cerr << "Invalid direction format in Pipes: " << line << std::endl;

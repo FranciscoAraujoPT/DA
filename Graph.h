@@ -10,6 +10,7 @@
 #include <queue>
 #include <limits>
 #include <algorithm>
+
 #include "GraphNode.h"
 
 class Graph {
@@ -38,6 +39,8 @@ class Graph {
                 }
                 s->addPipe(pipe);
                 pipes.push_back(pipe);
+            } else {
+                std::cerr << "Source: " <<((s==nullptr)?"null":source) << "\tDestination: " << ((d==nullptr)?"null":destination) << std::endl;
             }
         }
         std::vector<Pipeline *> getAllPipes() {

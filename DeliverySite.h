@@ -10,14 +10,14 @@
 
 class DeliverySite : public GraphNode{
     public:
-        DeliverySite(std::string  city, int id, const std::string& code, double demand, int population);
+        DeliverySite(std::string  city, int id, const std::string& code, double demand, double population);
 
     private:
         std::string city;
         int id;
         std::string code;
         double demand;
-        int population;
+        double population;
 };
 
 #endif //DA_DELIVERYSITE_H
