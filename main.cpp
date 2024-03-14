@@ -31,11 +31,6 @@ int main() {
     std::cout << "Vertices:" << std::endl;
     for (auto vertex : graph.getAllVertex()) {
         std::cout << "Vertex: " << vertex->getId() << std::endl;
-        std::cout << "Adjacent Vertices: ";
-        for (auto edge : vertex->getPipes()) {
-            std::cout << edge.getDestination()->getId() << " ";
-        }
-        std::cout << std::endl;
     }
 
     return 0;
