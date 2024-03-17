@@ -12,12 +12,19 @@ class DeliverySite : public GraphNode{
     public:
         DeliverySite(std::string  city, int id, const std::string& code, double demand, double population);
 
+        std::string getCityName();
+        double getDemand();
+        double getPopulation();
+        double getWaterReceive();
+        void setWaterReceive(double waterReceived);
+
     private:
         std::string city;
         int id;
         std::string code;
         double demand;
         double population;
+        double receive = 0;
 };
 
 #endif //DA_DELIVERYSITE_H

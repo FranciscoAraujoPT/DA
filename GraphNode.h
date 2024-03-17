@@ -14,15 +14,24 @@
 class GraphNode {
     public:
         GraphNode(int id, std::string  code);
-        const int& getId() const;
+
+        const int& getID() const;
         const std::string& getCode() const;
         const std::vector<Pipeline*>& getPipes() const;
         void addPipe(Pipeline* pipe);
+        bool isVisited() const;
+        void setVisited(bool status);
+        void setPath(Pipeline* path);
+        Pipeline *getPath();
+        std::vector<Pipeline*> getIncoming();
 
-    private:
+private:
         int id_;
         std::string code_;
         std::vector<Pipeline*> pipes_;
+        bool visited = false;
+        Pipeline* path = nullptr;
+        std::vector<Pipeline*> incoming;
 };
 
 #endif //DA_GRAPHNODE_H

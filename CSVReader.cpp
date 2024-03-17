@@ -47,7 +47,9 @@ void CSVReader::readReservoirData(Graph* graph) {
                 std::cerr << "Invalid max delivery format in reservoir: " << line << std::endl;
                 continue; // Skip this line if max delivery is not a valid integer
             }
-            graph->addVertex(new WaterReservoir(reservoirName, municipality, id, code, maxDelivery));
+
+            graph->addMainPipe(graph->getSource(),
+                               graph->addVertex(graph->addReservoir(new WaterReservoir(reservoirName, municipality, id, code, maxDelivery))), maxDelivery);
         }
 
     }
@@ -103,7 +105,8 @@ void CSVReader::readCitiesData(Graph* graph) {
                 std::cerr << "Invalid population format in Delivery sites: " << line << std::endl;
                 continue; // Skip this line if population is not a valid double
             }
-            graph->addVertex(new DeliverySite(cityName, id, code, demand, population));
+            graph->addMainPipe(graph->addVertex(graph->addCities(new DeliverySite(cityName, id, code, demand, population))),
+                               graph->getDestination(), demand);
         }
     }
 

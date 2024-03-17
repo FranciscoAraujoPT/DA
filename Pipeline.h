@@ -17,11 +17,16 @@ class Pipeline{
         GraphNode * getDestination() ;
         double getCapacity() const;
         bool getDirection() const;
-    private:
+        double getFlow() const;
+
+    void setFlow(double d);
+
+private:
         GraphNode *source; // Source service (water reservoir, pumping station, or delivery site)
         GraphNode *destination; // Target service (water reservoir, pumping station, or delivery site)
         double capacity; // Maximum capacity of the pipe
-        bool direction; // Direction of connection (1 - unidirectional, 0 - bidirectional)
+        bool direction; // Direction of connection (true - unidirectional, false - bidirectional)
+        double flow = 0;
 };
 
 
