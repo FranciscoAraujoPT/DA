@@ -9,3 +9,9 @@ WaterReservoir::WaterReservoir(const std::string &name, const std::string &munic
                                                                               GraphNode(id, code), maxDelivery(maxDelivery){
 
 }
+
+std::string WaterReservoir::getName() { return name; }
+
+std::string WaterReservoir::getMunicipality() { return municipality; }
+
+double WaterReservoir::getMaxDelivery() const { return maxDelivery; }

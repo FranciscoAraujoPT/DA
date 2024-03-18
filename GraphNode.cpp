@@ -21,5 +21,3 @@ void GraphNode::setVisited(bool status) { visited = status; }
 void GraphNode::setPath(Pipeline* newPath) { this->path = newPath; }
 
 Pipeline *GraphNode::getPath() { return path; }
-
-std::vector<Pipeline*> GraphNode::getIncoming() { return incoming; }

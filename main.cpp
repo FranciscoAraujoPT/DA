@@ -26,16 +26,16 @@ bool findAugmentingPath(Graph* g, GraphNode* s, GraphNode* t) {
     std::queue<GraphNode*> q;
     q.push(s);
     // BFS to find an augmenting path
-    while( !q.empty() && !t->isVisited()) {
+    while(!q.empty() && !t->isVisited()) {
         auto v = q.front();
         q.pop();
         // Process outgoing edges
         for(auto e: v->getPipes()) {
-            testAndVisit(q, e, e->getDestination(), e->getCapacity() - e->getFlow());
-        }
-        // Process incoming edges
-        for(auto e: v->getIncoming()) {
-            testAndVisit(q, e, e->getSource(), e->getFlow());
+            if(!e->getDirection() && e->getDestination() == v){
+                testAndVisit(q, e, e->getSource(), e->getCapacity() - e->getFlow());
+            } else {
+                testAndVisit(q, e, e->getDestination(), e->getCapacity() - e->getFlow());
+            }
         }
     }
 
@@ -50,13 +50,12 @@ double findMinResidualAlongPath(GraphNode* s, GraphNode* t) {
     for (GraphNode* v = t; v != s; ) {
         auto e = v->getPath();
         if (e->getDestination() == v) {
-            f = std::min(f, e->getCapacity() - e->getFlow());
             v = e->getSource();
         }
         else {
-            f = std::min(f, e->getFlow());
             v = e->getDestination();
         }
+        f = std::min(f, e->getCapacity() - e->getFlow());
     }
 
     // Return the minimum residual capacity
@@ -70,13 +69,12 @@ void augmentFlowAlongPath(WaterReservoir* s, DeliverySite* t, double f) {
         auto e = v->getPath();
         double flow = e->getFlow();
         if (e->getDestination() == v) {
-            e->setFlow(flow + f);
             v = e->getSource();
         }
         else {
-            e->setFlow(flow - f);
             v = e->getDestination();
         }
+        e->setFlow(flow + f);
     }
 
     auto* final_city = static_cast<DeliverySite *>(t->getPath()->getSource());
@@ -99,7 +97,7 @@ void edmondsKarp(Graph* g, WaterReservoir* mainSource, DeliverySite* mainDeliver
     }
 
     // While there is an augmenting path, augment the flow along the path
-    while(findAugmentingPath(g, mainSource, mainDelivery)) {
+    while(findAugmentingPath(g, mainSource, mainDelivery))  {
         double f = findMinResidualAlongPath(mainSource, mainDelivery);
         augmentFlowAlongPath(mainSource, mainDelivery, f);
     }
@@ -130,15 +128,26 @@ int main() {
     CSVReader pipesReader(pipes_filename);
     pipesReader.readPipesData(graph);
 
+    char line[150];
+    double totalMaxDelivery = 0, totalMaxConsumption = 0;
+    std::cout << "Reservoir reports: " << std::endl;
+    for(auto reservoir: graph->getReservoirs()){
+        snprintf(line, 150,"\tReservoir ID: %-3d\tCode: %-5s\tName: %-20s\tMunicipality: %-15s\tMax delivery: %-4.0f\n",
+                    reservoir->getID(), reservoir->getCode().c_str(), reservoir->getName().c_str(), reservoir->getMunicipality().c_str(), reservoir->getMaxDelivery());
+        totalMaxDelivery += reservoir->getMaxDelivery();
+        std::cout << line;
+    }
+    std::cout << "Max delivery possible: " << totalMaxDelivery << std::endl << std::endl;
+
     edmondsKarp(graph, graph->getSource(), graph->getDestination());
     std::ofstream output("output.txt");
-    char line[150];
     if (output.is_open()){
         output << "Cities reports: " << std::endl;
         std::cout << "Cities reports: " << std::endl;
         for (DeliverySite* city : graph->getCities()){
-            snprintf(line, 150,"\tCity ID: %-3d\tCode: %-5s\tName: %-15s\tPopulation: %-5.0f\tDemand: %-4.0f\tWater Received: %-5.0f\n",
+            snprintf(line, 150,"\tCity ID: %-3d\tCode: %-5s\tName: %-20s\tPopulation: %-5.0f\tDemand: %-4.0f\tWater Received: %-5.0f\n",
                    city->getID(), city->getCode().c_str(),city->getCityName().c_str(), city->getPopulation(), city->getDemand(), city->getWaterReceive());
+            totalMaxConsumption += city->getDemand();
             output << line;
             std::cout << line;
         }
@@ -147,7 +156,15 @@ int main() {
         std::cerr << "Error opening file\n";
     }
 
+    std::cout << "Max consumption possible: " << totalMaxConsumption << std::endl << std::endl << "Difference between possible consumption and delivery: " << totalMaxConsumption - totalMaxDelivery << std::endl << std::endl;
 
+    std::cout << "Pipes reports: " << std::endl;
+    for(auto pipe: graph->getAllPipes()){
+        snprintf(line, 150, "\tSource Code: %-15s\tDestination Code: %-15s\tCapacity: %-5.0f\tDirection: %-3d\tFlow: %-5.0f\tPossible Flow: %5.0f\n",
+                 pipe->getSource()->getCode().c_str(), pipe->getDestination()->getCode().c_str(), pipe->getCapacity(), pipe->getDirection(), pipe->getFlow(), pipe->getCapacity()-pipe->getFlow());
+        std::cout << line;
+    }
+    std::cout << std::endl;
 
     return 0;
 }

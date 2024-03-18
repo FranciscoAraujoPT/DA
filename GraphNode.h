@@ -23,7 +23,6 @@ class GraphNode {
         void setVisited(bool status);
         void setPath(Pipeline* path);
         Pipeline *getPath();
-        std::vector<Pipeline*> getIncoming();
 
 private:
         int id_;
@@ -31,7 +30,6 @@ private:
         std::vector<Pipeline*> pipes_;
         bool visited = false;
         Pipeline* path = nullptr;
-        std::vector<Pipeline*> incoming;
 };
 
 #endif //DA_GRAPHNODE_H

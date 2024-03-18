@@ -8,21 +8,13 @@ Pipeline::Pipeline(GraphNode* source, GraphNode* destination, double capacity, b
 
 }
 
-GraphNode * Pipeline::getSource() {
-    return this->source;
-}
+GraphNode * Pipeline::getSource() { return this->source; }
 
-GraphNode * Pipeline::getDestination() {
-    return this->destination;
-}
+GraphNode * Pipeline::getDestination() { return this->destination; }
 
-double Pipeline::getCapacity() const {
-    return this->capacity;
-}
+double Pipeline::getCapacity() const { return this->capacity; }
 
-bool Pipeline::getDirection() const {
-    return this->direction;
-}
+bool Pipeline::getDirection() const { return this->direction; }
 
 double Pipeline::getFlow() const { return flow; }
 

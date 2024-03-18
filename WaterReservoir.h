@@ -12,6 +12,10 @@ class WaterReservoir : public GraphNode {
     public:
         WaterReservoir(const std::string &name, const std::string &municipality, int id, const std::string &code, double maxDelivery);
 
+        std::string getName();
+        std::string getMunicipality();
+        double  getMaxDelivery() const;
+
     private:
         std::string name;
         std::string municipality;
