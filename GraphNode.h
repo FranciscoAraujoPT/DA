@@ -15,9 +15,9 @@ class GraphNode {
     public:
         GraphNode(int id, std::string  code);
 
-        const int& getID() const;
-        const std::string& getCode() const;
-        const std::vector<Pipeline*>& getPipes() const;
+        int& getID();
+        std::string& getCode();
+        std::vector<Pipeline*>& getPipes();
         void addPipe(Pipeline* pipe);
         bool isVisited() const;
         void setVisited(bool status);

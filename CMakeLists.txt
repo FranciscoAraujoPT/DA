@@ -4,6 +4,8 @@ project(DA)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(DA main.cpp
+        OptimizeFlow.h
+        OptimizeFlow.cpp
         CSVReader.cpp
         CSVReader.h
         WaterReservoir.cpp
@@ -16,9 +18,7 @@ add_executable(DA main.cpp
         Pipeline.h
         Graph.h
         GraphNode.h
-        GraphNode.cpp
-        OptimizeFlow.h
-        OptimizeFlow.cpp)
+        GraphNode.cpp)
 
 file(GLOB_RECURSE data ./data/*)
 

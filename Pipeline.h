@@ -18,8 +18,8 @@ class Pipeline{
         double getCapacity() const;
         bool getDirection() const;
         double getFlow() const;
-
-    void setFlow(double d);
+        void setFlow(double d);
+        bool operator<(Pipeline& other) const;
 
 private:
         GraphNode *source; // Source service (water reservoir, pumping station, or delivery site)
