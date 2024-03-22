@@ -16,7 +16,9 @@ add_executable(DA main.cpp
         Pipeline.h
         Graph.h
         GraphNode.h
-        GraphNode.cpp)
+        GraphNode.cpp
+        OptimizeFlow.h
+        OptimizeFlow.cpp)
 
 file(GLOB_RECURSE data ./data/*)
 

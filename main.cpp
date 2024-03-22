@@ -6,106 +6,6 @@
 #include "OptimizeFlow.h"
 #include <iomanip>
 
-/*
-// Function to test the given vertex 'w' and visit it if conditions are met
-void testAndVisit(std::queue<GraphNode*> &q, Pipeline* e, GraphNode* w, double residual) {
-    // Check if the vertex 'w' is not visited and there is residual capacity
-    if (! w->isVisited() && residual > 0) {
-        // Mark 'w' as visited, set the path through which it was reached, and enqueue it
-        w->setVisited(true);
-        w->setPath(e);
-        q.push(w);
-    }
-}
-
-// Function to find an augmenting path using Breadth-First Search
-bool findAugmentingPath(Graph* g, GraphNode* s, GraphNode* t) {
-    // Mark all vertices as not visited
-    for(auto v : g->getAllVertex()) {
-        v->setVisited(false);
-    }
-    // Mark the source vertex as visited and enqueue it
-    s->setVisited(true);
-    std::queue<GraphNode*> q;
-    q.push(s);
-    // BFS to find an augmenting path
-    while(!q.empty() && !t->isVisited()) {
-        auto v = q.front();
-        q.pop();
-        // Process outgoing edges
-        for(auto e: v->getPipes()) {
-            if(!e->getDirection() && e->getDestination() == v){
-                testAndVisit(q, e, e->getSource(), e->getCapacity() - e->getFlow());
-            } else {
-                testAndVisit(q, e, e->getDestination(), e->getCapacity() - e->getFlow());
-            }
-        }
-    }
-
-    // Return true if a path to the target is found, false otherwise
-    return t->isVisited();
-}
-
-// Function to find the minimum residual capacity along the augmenting path
-double findMinResidualAlongPath(GraphNode* s, GraphNode* t) {
-    double f = INF;
-    // Traverse the augmenting path to find the minimum residual capacity
-    for (GraphNode* v = t; v != s; ) {
-        auto e = v->getPath();
-        if (e->getDestination() == v) {
-            v = e->getSource();
-        }
-        else {
-            v = e->getDestination();
-        }
-        f = std::min(f, e->getCapacity() - e->getFlow());
-    }
-
-    // Return the minimum residual capacity
-    return f;
-}
-
-// Function to augment flow along the augmenting path with the given flow value
-void augmentFlowAlongPath(WaterReservoir* s, DeliverySite* t, double f) {
-    // Traverse the augmenting path and update the flow values accordingly
-    for (GraphNode* v = t; v != s; ) {
-        auto e = v->getPath();
-        double flow = e->getFlow();
-        if (e->getDestination() == v) {
-            v = e->getSource();
-        }
-        else {
-            v = e->getDestination();
-        }
-        e->setFlow(flow + f);
-    }
-
-    auto* final_city = static_cast<DeliverySite *>(t->getPath()->getSource());
-    final_city->setWaterReceive(t->getPath()->getFlow());
-    t->setWaterReceive(t->getPath()->getFlow());
-}
-
-// Main function implementing the Edmonds-Karp algorithm
-void edmondsKarp(Graph* g, WaterReservoir* mainSource, DeliverySite* mainDelivery) {
-    // Validate source and target_code vertices
-    if (mainSource == nullptr || mainDelivery == nullptr){
-        throw std::logic_error("Invalid source and/or delivery vertex");
-    }
-
-    // Initialize flow on all edges to 0
-    for (auto v : g->getAllVertex()) {
-        for (auto e: v->getPipes()) {
-            e->setFlow(0);
-        }
-    }
-
-    // While there is an augmenting path, augment the flow along the path
-    while(findAugmentingPath(g, mainSource, mainDelivery))  {
-        double f = findMinResidualAlongPath(mainSource, mainDelivery);
-        augmentFlowAlongPath(mainSource, mainDelivery, f);
-    }
-}
-*/
 
 void menu(Graph* graph) {
     std::cout << "Flow Optimization Menu:" << std::endl;
@@ -172,8 +72,7 @@ void menu(Graph* graph) {
                 }
                 break;
             case 4:
-                //edmondsKarp(graph, graph->getSource(), graph->getDestination());
-                std::cout << "Not Implemented yet" << std::endl;
+                OptimizeFlow().edmondsKarp(graph, graph->getSource(), graph->getDestination());
                 break;
             case 5:
                 std::cout << "Exiting..." << std::endl;

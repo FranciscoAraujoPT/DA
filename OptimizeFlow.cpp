@@ -1,6 +1,6 @@
 #include "OptimizeFlow.h"
 
-void testAndVisit(std::queue<GraphNode*> &q, Pipeline* e, GraphNode* w, double residual) {
+void OptimizeFlow::testAndVisit(std::queue<GraphNode*> &q, Pipeline* e, GraphNode* w, double residual) {
     if (!w->isVisited() && residual > 0) {
         w->setVisited(true);
         w->setPath(e);
@@ -8,7 +8,7 @@ void testAndVisit(std::queue<GraphNode*> &q, Pipeline* e, GraphNode* w, double r
     }
 }
 
-bool findAugmentingPath(Graph* g, GraphNode* s, GraphNode* t) {
+bool OptimizeFlow::findAugmentingPath(Graph* g, GraphNode* s, GraphNode* t) {
     for (auto v : g->getAllVertex()) {
         v->setVisited(false);
     }
@@ -29,7 +29,7 @@ bool findAugmentingPath(Graph* g, GraphNode* s, GraphNode* t) {
     return t->isVisited();
 }
 
-double findMinResidualAlongPath(GraphNode* s, GraphNode* t) {
+double OptimizeFlow::findMinResidualAlongPath(GraphNode* s, GraphNode* t) {
     double f = INF;
     for (GraphNode* v = t; v != s;) {
         auto e = v->getPath();
@@ -43,7 +43,7 @@ double findMinResidualAlongPath(GraphNode* s, GraphNode* t) {
     return f;
 }
 
-void augmentFlowAlongPath(WaterReservoir* s, DeliverySite* t, double f) {
+void OptimizeFlow::augmentFlowAlongPath(WaterReservoir* s, DeliverySite* t, double f) {
     for (GraphNode* v = t; v != s;) {
         auto e = v->getPath();
         double flow = e->getFlow();
@@ -59,7 +59,7 @@ void augmentFlowAlongPath(WaterReservoir* s, DeliverySite* t, double f) {
     t->setWaterReceive(t->getPath()->getFlow());
 }
 
-void edmondsKarp(Graph* g, WaterReservoir* mainSource, DeliverySite* mainDelivery) {
+void OptimizeFlow::edmondsKarp(Graph* g, WaterReservoir* mainSource, DeliverySite* mainDelivery) {
     if (mainSource == nullptr || mainDelivery == nullptr) {
         throw std::logic_error("Invalid source and/or delivery vertex");
     }
