@@ -10,12 +10,12 @@
 class OptimizeFlow {
     private:
         void testAndVisit(std::queue<GraphNode*> &q, Pipeline* e, GraphNode* w, double residual);
-        bool findAugmentingPath(Graph* g, GraphNode* s, GraphNode* t);
+        bool findAugmentingPath(GraphNode* s, GraphNode* t);
         double findMinResidualAlongPath(GraphNode* s, GraphNode* t);
         void augmentFlowAlongPath(WaterReservoir* s, DeliverySite* t, double f);
 
     public:
-        void edmondsKarp(Graph* g, WaterReservoir* mainSource, DeliverySite* mainDelivery);
+        void edmondsKarp(Graph* g);
 };
 
 #endif // OPTIMIZEFLOW_H

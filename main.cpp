@@ -72,7 +72,7 @@ void menu(Graph* graph) {
                 }
                 break;
             case 4:
-                OptimizeFlow().edmondsKarp(graph, graph->getSource(), graph->getDestination());
+                OptimizeFlow().edmondsKarp(graph);
                 break;
             case 5:
                 std::cout << "Exiting..." << std::endl;

@@ -8,24 +8,46 @@ void OptimizeFlow::testAndVisit(std::queue<GraphNode*> &q, Pipeline* e, GraphNod
     }
 }
 
-bool OptimizeFlow::findAugmentingPath(Graph* g, GraphNode* s, GraphNode* t) {
-    for (auto v : g->getAllVertex()) {
-        v->setVisited(false);
-    }
+bool OptimizeFlow::findAugmentingPath(GraphNode* s, GraphNode* t) {
     s->setVisited(true);
     std::queue<GraphNode*> q;
     q.push(s);
     while (!q.empty() && !t->isVisited()) {
-        auto v = q.front();
-        q.pop();
+        auto v = q.back();
+        std::cout << v->getCode() << std::endl;
+        double bestCapacity = 0;
+        Pipeline* p = nullptr;
+        double residual = 0;
         for (auto e : v->getPipes()) {
             if (!e->getDirection() && e->getDestination() == v) {
-                testAndVisit(q, e, e->getSource(), e->getCapacity() - e->getFlow());
-            } else {
-                testAndVisit(q, e, e->getDestination(), e->getCapacity() - e->getFlow());
+                if (!e->getSource()->isVisited()){
+                    residual = e->getCapacity()-e->getFlow();
+                    if(bestCapacity < residual) {
+                        bestCapacity = residual;
+                        p = e;
+                    }
+                }
+            } else if(!e->getDestination()->isVisited()){
+                residual = e->getCapacity() - e->getFlow();
+                if (bestCapacity < residual) {
+                    bestCapacity = residual;
+                    p = e;
+                }
             }
         }
+
+        if (p == nullptr){
+            q.pop();
+            continue;
+        }
+
+        if (!p->getDirection() && p->getDestination() == v) {
+            testAndVisit(q, p, p->getSource(), p->getCapacity() - p->getFlow());
+        } else  {
+            testAndVisit(q, p, p->getDestination(), p->getCapacity() - p->getFlow());
+        }
     }
+
     return t->isVisited();
 }
 
@@ -59,7 +81,10 @@ void OptimizeFlow::augmentFlowAlongPath(WaterReservoir* s, DeliverySite* t, doub
     t->setWaterReceive(t->getPath()->getFlow());
 }
 
-void OptimizeFlow::edmondsKarp(Graph* g, WaterReservoir* mainSource, DeliverySite* mainDelivery) {
+void OptimizeFlow::edmondsKarp(Graph* g) {
+    WaterReservoir* mainSource = g->getSource();
+    DeliverySite* mainDelivery = g->getDestination();
+
     if (mainSource == nullptr || mainDelivery == nullptr) {
         throw std::logic_error("Invalid source and/or delivery vertex");
     }
@@ -68,8 +93,14 @@ void OptimizeFlow::edmondsKarp(Graph* g, WaterReservoir* mainSource, DeliverySit
             e->setFlow(0);
         }
     }
-    while (findAugmentingPath(g, mainSource, mainDelivery)) {
+    for (auto v : g->getAllVertex()) {
+        v->setVisited(false);
+    }
+    while (findAugmentingPath(mainSource, mainDelivery)) {
         double f = findMinResidualAlongPath(mainSource, mainDelivery);
         augmentFlowAlongPath(mainSource, mainDelivery, f);
+        for (auto v : g->getAllVertex()) {
+            v->setVisited(false);
+        }
     }
 }
