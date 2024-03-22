@@ -3,7 +3,10 @@
 
 #include "CSVReader.h"
 #include "Graph.h"
+#include "OptimizeFlow.h"
+#include <iomanip>
 
+/*
 // Function to test the given vertex 'w' and visit it if conditions are met
 void testAndVisit(std::queue<GraphNode*> &q, Pipeline* e, GraphNode* w, double residual) {
     // Check if the vertex 'w' is not visited and there is residual capacity
@@ -102,9 +105,88 @@ void edmondsKarp(Graph* g, WaterReservoir* mainSource, DeliverySite* mainDeliver
         augmentFlowAlongPath(mainSource, mainDelivery, f);
     }
 }
+*/
+
+void menu(Graph* graph) {
+    std::cout << "Flow Optimization Menu:" << std::endl;
+    std::cout << "1. Reservoir Reports" << std::endl;
+    std::cout << "2. Cities Reports" << std::endl;
+    std::cout << "3. Pipes Reports" << std::endl;
+    std::cout << "4. Execute Edmonds-Karp Algorithm" << std::endl;
+    std::cout << "5. Exit" << std::endl;
+
+    bool menuOpen = true;
+
+    while(menuOpen) {
+        int choice;
+        std::cout << "Enter your choice: ";
+        std::cin >> choice;
+        switch (choice) {
+            case 1:
+                std::cout << "Reservoir reports: " << std::endl;
+                std::cout << std::setw(15) << std::left << "Reservoir ID"
+                          << std::setw(10) << std::left << "Code"
+                          << std::setw(30) << std::left << "Name"
+                          << std::setw(30) << std::left << "Municipality"
+                          << std::setw(15) << std::left << "Max delivery" << std::endl;
+                for (auto reservoir : graph->getReservoirs()) {
+                    std::cout << std::setw(15) << std::left << reservoir->getID()
+                              << std::setw(10) << std::left << reservoir->getCode()
+                              << std::setw(30) << std::left << reservoir->getName()
+                              << std::setw(30) << std::left << reservoir->getMunicipality()
+                              << std::setw(15) << std::left << reservoir->getMaxDelivery() << std::endl;
+                }
+                break;
+            case 2:
+                std::cout << "Cities reports: " << std::endl;
+                std::cout << std::setw(10) << std::left << "City ID"
+                          << std::setw(10) << std::left << "Code"
+                          << std::setw(20) << std::left << "Name"
+                          << std::setw(15) << std::left << "Population"
+                          << std::setw(15) << std::left << "Demand"
+                          << std::setw(20) << std::left << "Water Received" << std::endl;
+                for (DeliverySite *city: graph->getCities()) {
+                    std::cout << std::setw(10) << std::left << city->getID()
+                              << std::setw(10) << std::left << city->getCode()
+                              << std::setw(20) << std::left << city->getCityName()
+                              << std::setw(15) << std::left << city->getPopulation()
+                              << std::setw(15) << std::left << city->getDemand()
+                              << std::setw(20) << std::left << city->getWaterReceive() << std::endl;
+                }
+                break;
+            case 3:
+                std::cout << "Pipes reports: " << std::endl;
+                std::cout << std::setw(15) << std::left << "Source Code"
+                          << std::setw(20) << std::left << "Destination Code"
+                          << std::setw(15) << std::left << "Capacity"
+                          << std::setw(15) << std::left << "Direction"
+                          << std::setw(10) << std::left << "Flow"
+                          << std::setw(20) << std::left << "Possible Flow" << std::endl;
+                for (auto pipe: graph->getAllPipes()) {
+                    std::cout << std::setw(15) << std::left << pipe->getSource()->getCode()
+                              << std::setw(20) << std::left << pipe->getDestination()->getCode()
+                              << std::setw(15) << std::left << pipe->getCapacity()
+                              << std::setw(15) << std::left << pipe->getDirection()
+                              << std::setw(10) << std::left << pipe->getFlow()
+                              << std::setw(20) << std::left << pipe->getCapacity() - pipe->getFlow() << std::endl;
+                }
+                break;
+            case 4:
+                //edmondsKarp(graph, graph->getSource(), graph->getDestination());
+                std::cout << "Not Implemented yet" << std::endl;
+                break;
+            case 5:
+                std::cout << "Exiting..." << std::endl;
+                menuOpen = false;
+                break;
+            default:
+                std::cout << "Invalid choice. Please try again." << std::endl;
+                break;
+        }
+    }
+}
 
 int main() {
-
     std::string reservoir_filename = "./data/Reservoirs_Madeira.csv";
     std::string stations_filename = "./data/Stations_Madeira.csv";
     std::string cities_filename = "./data/Cities_Madeira.csv";
@@ -128,43 +210,12 @@ int main() {
     CSVReader pipesReader(pipes_filename);
     pipesReader.readPipesData(graph);
 
-    char line[150];
-    double totalMaxDelivery = 0, totalMaxConsumption = 0;
-    std::cout << "Reservoir reports: " << std::endl;
-    for(auto reservoir: graph->getReservoirs()){
-        snprintf(line, 150,"\tReservoir ID: %-3d\tCode: %-5s\tName: %-20s\tMunicipality: %-15s\tMax delivery: %-4.0f\n",
-                    reservoir->getID(), reservoir->getCode().c_str(), reservoir->getName().c_str(), reservoir->getMunicipality().c_str(), reservoir->getMaxDelivery());
-        totalMaxDelivery += reservoir->getMaxDelivery();
-        std::cout << line;
-    }
-    std::cout << "Max delivery possible: " << totalMaxDelivery << std::endl << std::endl;
+    menu(graph); // Call the menu function
 
-    edmondsKarp(graph, graph->getSource(), graph->getDestination());
-    std::ofstream output("output.txt");
-    if (output.is_open()){
-        output << "Cities reports: " << std::endl;
-        std::cout << "Cities reports: " << std::endl;
-        for (DeliverySite* city : graph->getCities()){
-            snprintf(line, 150,"\tCity ID: %-3d\tCode: %-5s\tName: %-20s\tPopulation: %-5.0f\tDemand: %-4.0f\tWater Received: %-5.0f\n",
-                   city->getID(), city->getCode().c_str(),city->getCityName().c_str(), city->getPopulation(), city->getDemand(), city->getWaterReceive());
-            totalMaxConsumption += city->getDemand();
-            output << line;
-            std::cout << line;
-        }
-        output.close();
-    } else {
-        std::cerr << "Error opening file\n";
-    }
+    // Perform any cleanup if needed
 
-    std::cout << "Max consumption possible: " << totalMaxConsumption << std::endl << std::endl << "Difference between possible consumption and delivery: " << totalMaxConsumption - totalMaxDelivery << std::endl << std::endl;
-
-    std::cout << "Pipes reports: " << std::endl;
-    for(auto pipe: graph->getAllPipes()){
-        snprintf(line, 150, "\tSource Code: %-15s\tDestination Code: %-15s\tCapacity: %-5.0f\tDirection: %-3d\tFlow: %-5.0f\tPossible Flow: %5.0f\n",
-                 pipe->getSource()->getCode().c_str(), pipe->getDestination()->getCode().c_str(), pipe->getCapacity(), pipe->getDirection(), pipe->getFlow(), pipe->getCapacity()-pipe->getFlow());
-        std::cout << line;
-    }
-    std::cout << std::endl;
+    delete graph; // Clean up dynamically allocated memory
 
     return 0;
 }
+
