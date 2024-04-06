@@ -90,7 +90,7 @@ class Graph {
         std::vector<DeliverySite*> getCities() { return cities;}
 
     private:
-        WaterReservoir* source = new WaterReservoir("main_source", "", 0, "main_source_0", 0);
+        WaterReservoir* source = new WaterReservoir("main_source", "", 0, "main_source_0", 0, true);
         DeliverySite* destination = new DeliverySite("main_deliver", 0, "main_delivery_0", 0, 0);
         std::vector<GraphNode*> vertices;
         std::vector<WaterReservoir*> reservoirs;

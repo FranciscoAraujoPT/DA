@@ -23,6 +23,7 @@ class GraphNode {
         void setVisited(bool status);
         void setPath(Pipeline* path);
         Pipeline *getPath();
+        virtual bool isAvailable(); //meant to be overriden
 
 private:
         int id_;

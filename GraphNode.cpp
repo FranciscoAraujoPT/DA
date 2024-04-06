@@ -21,3 +21,5 @@ void GraphNode::setVisited(bool status) { visited = status; }
 void GraphNode::setPath(Pipeline* newPath) { this->path = newPath; }
 
 Pipeline *GraphNode::getPath() { return path; }
+
+bool GraphNode::isAvailable() { return true; } //meant to be overridden

@@ -48,8 +48,7 @@ void CSVReader::readReservoirData(Graph* graph) {
                 continue; // Skip this line if max delivery is not a valid integer
             }
 
-            graph->addMainPipe(graph->getSource(),
-                               graph->addVertex(graph->addReservoir(new WaterReservoir(reservoirName, municipality, id, code, maxDelivery))), maxDelivery);
+            graph->addMainPipe(graph->getSource(), graph->addVertex(graph->addReservoir(new WaterReservoir(reservoirName, municipality, id, code, maxDelivery,true))), maxDelivery); //initializes all reservoirs with available=true
         }
 
     }

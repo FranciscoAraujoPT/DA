@@ -18,6 +18,8 @@ class Pipeline{
         double getCapacity() const;
         bool getDirection() const;
         double getFlow() const;
+        bool isAvailable();
+        void setAvailable();
 
     void setFlow(double d);
 
@@ -27,6 +29,7 @@ private:
         double capacity; // Maximum capacity of the pipe
         bool direction; // Direction of connection (true - unidirectional, false - bidirectional)
         double flow = 0;
+        bool available = true;
 };
 
 

@@ -19,6 +19,11 @@ bool OptimizeFlow::findAugmentingPath(Graph* g, GraphNode* s, GraphNode* t) {
         auto v = q.front();
         q.pop();
         for (auto e : v->getPipes()) {
+
+            if(!e->getSource()->isAvailable()){
+                continue; //if source water reservoir is unavailable skip the pipe
+            }
+
             if (!e->getDirection() && e->getDestination() == v) {
                 testAndVisit(q, e, e->getSource(), e->getCapacity() - e->getFlow());
             } else {
