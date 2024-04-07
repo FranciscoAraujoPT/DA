@@ -4,7 +4,7 @@
 
 #include "GraphNode.h"
 
-GraphNode::GraphNode(const int id, std::string code) : id_(id), code_(std::move(code)) {}
+GraphNode::GraphNode(const int id, std::string code, bool available) : id_(id), code_(std::move(code)), available(available) {}
 
 const int &GraphNode::getID() const { return id_; }
 
@@ -22,4 +22,6 @@ void GraphNode::setPath(Pipeline* newPath) { this->path = newPath; }
 
 Pipeline *GraphNode::getPath() { return path; }
 
-bool GraphNode::isAvailable() { return true; } //meant to be overridden
+bool GraphNode::isAvailable() { return available; } //meant to be overridden
+
+void GraphNode::setAvailable(bool a) {this->available = a; }

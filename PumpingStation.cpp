@@ -4,4 +4,5 @@
 
 #include "PumpingStation.h"
 
-PumpingStation::PumpingStation(int id, const std::string& code) : GraphNode(id, code) {}
+PumpingStation::PumpingStation(int id, const std::string& code)
+        : GraphNode(id, code, true) {}

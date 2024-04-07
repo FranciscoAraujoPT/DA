@@ -1,7 +1,7 @@
 #include "OptimizeFlow.h"
 
 void OptimizeFlow::testAndVisit(std::queue<GraphNode*> &q, Pipeline* e, GraphNode* w, double residual) {
-    if (!w->isVisited() && residual > 0) {
+    if (!w->isVisited() && residual > 0 && e->isAvailable() && w->isAvailable()) {
         w->setVisited(true);
         w->setPath(e);
         q.push(w);
@@ -19,11 +19,12 @@ bool OptimizeFlow::findAugmentingPath(Graph* g, GraphNode* s, GraphNode* t) {
         auto v = q.front();
         q.pop();
         for (auto e : v->getPipes()) {
-
-            if(!e->getSource()->isAvailable()){
-                continue; //if source water reservoir is unavailable skip the pipe
+            if (!e->isAvailable()) {
+                continue; // Skip unavailable pipeline
             }
-
+            if (!e->getSource()->isAvailable() || !e->getDestination()->isAvailable()) {
+                continue; // Skip if either source or destination is unavailable
+            }
             if (!e->getDirection() && e->getDestination() == v) {
                 testAndVisit(q, e, e->getSource(), e->getCapacity() - e->getFlow());
             } else {

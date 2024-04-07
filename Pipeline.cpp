@@ -4,7 +4,7 @@
 
 #include "Pipeline.h"
 
-Pipeline::Pipeline(GraphNode* source, GraphNode* destination, double capacity, bool direction) : source(source), destination(destination), capacity(capacity), direction(direction){
+Pipeline::Pipeline(GraphNode* source, GraphNode* destination, double capacity, bool direction, bool available) : source(source), destination(destination), capacity(capacity), direction(direction), available(available){
 
 }
 
@@ -19,3 +19,7 @@ bool Pipeline::getDirection() const { return this->direction; }
 double Pipeline::getFlow() const { return flow; }
 
 void Pipeline::setFlow(double newFlow) { this->flow = newFlow; }
+
+bool Pipeline::isAvailable() const { return this->available; }
+
+void Pipeline::setAvailable(bool newAvailable) {this->available = newAvailable;}

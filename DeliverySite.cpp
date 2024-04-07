@@ -7,7 +7,7 @@
 #include <utility>
 
 DeliverySite::DeliverySite(std::string  city, int id, const std::string& code, double demand, double population)
-        : city(std::move(city)), GraphNode(id, code), demand(demand), population(population) {}
+        : city(std::move(city)), GraphNode(id, code, true), demand(demand), population(population) {}
 
         std::string DeliverySite::getCityName() {return city;}
 

@@ -11,15 +11,15 @@ class GraphNode;
 
 class Pipeline{
     public:
-        Pipeline(GraphNode* source, GraphNode* destination, double capacity, bool direction);
+        Pipeline(GraphNode* source, GraphNode* destination, double capacity, bool direction, bool available);
 
         GraphNode * getSource() ;
         GraphNode * getDestination() ;
         double getCapacity() const;
         bool getDirection() const;
         double getFlow() const;
-        bool isAvailable();
-        void setAvailable();
+        bool isAvailable() const;
+        void setAvailable(bool a);
 
     void setFlow(double d);
 

@@ -48,7 +48,7 @@ void CSVReader::readReservoirData(Graph* graph) {
                 continue; // Skip this line if max delivery is not a valid integer
             }
 
-            graph->addMainPipe(graph->getSource(), graph->addVertex(graph->addReservoir(new WaterReservoir(reservoirName, municipality, id, code, maxDelivery,true))), maxDelivery); //initializes all reservoirs with available=true
+            graph->addMainPipe(graph->getSource(), graph->addVertex(graph->addReservoir(new WaterReservoir(reservoirName, municipality, id, code, maxDelivery))), maxDelivery);
         }
 
     }
@@ -135,7 +135,7 @@ void CSVReader::readStationsData(Graph* graph) {
                 idStr.erase(std::remove(idStr.begin(), idStr.end(), ','), idStr.end());
                 id = std::stoi(idStr);
             } catch (const std::invalid_argument& e) {
-                std::cerr << "Invalid ID format in Stations: " << line << std::endl;
+                //std::cerr << "Invalid ID format in Stations: " << line << std::endl;
                 continue; // Skip this line if ID is not a valid integer
             }
             code.erase(std::remove(code.begin(), code.end(), '"'), code.end());

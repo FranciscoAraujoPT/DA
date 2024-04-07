@@ -30,6 +30,7 @@ class Graph {
                 delete vertex;
             }
         }
+
         GraphNode * addVertex(GraphNode* data) {
             vertices.push_back(data);
             return data;
@@ -41,7 +42,7 @@ class Graph {
             GraphNode* s = findVertexByCode(source_code);
             GraphNode* d = findVertexByCode(destination_code);
             if(s != nullptr && d != nullptr){
-                auto *pipe = new Pipeline(s, d, capacity, direction);
+                auto *pipe = new Pipeline(s, d, capacity, direction, true);
                 if(!direction){
                     d->addPipe(pipe);
                 }
@@ -53,7 +54,7 @@ class Graph {
         }
         void addMainPipe(GraphNode* source, GraphNode* destination, double capacity) {
             if(source != nullptr && destination != nullptr){
-                auto *pipe = new Pipeline(source, destination, capacity, true);
+                auto *pipe = new Pipeline(source, destination, capacity, 1, true);
                 source->addPipe(pipe);
                 pipes.push_back(pipe);
             } else {
@@ -89,8 +90,39 @@ class Graph {
 
         std::vector<DeliverySite*> getCities() { return cities;}
 
+    PumpingStation* getPumpingStationById(int id) {
+        for (auto vertex : vertices) {
+            // Attempt to cast the current vertex to a PumpingStation pointer
+            PumpingStation* pumpingStation = dynamic_cast<PumpingStation*>(vertex);
+
+            if (pumpingStation != nullptr && pumpingStation->getID() == id) {
+                return pumpingStation;
+            }
+        }
+        return nullptr;
+    }
+
+
+    DeliverySite* getDeliverySiteById(int id) {
+        for (auto city : cities) {
+            if (city->getID() == id) {
+                return city;
+            }
+        }
+        return nullptr;
+    }
+
+    WaterReservoir* getReservoirById(int id) {
+        for (auto reservoir : reservoirs) {
+            if (reservoir->getID() == id) {
+                return reservoir;
+            }
+        }
+        return nullptr;
+    }
+
     private:
-        WaterReservoir* source = new WaterReservoir("main_source", "", 0, "main_source_0", 0, true);
+        WaterReservoir* source = new WaterReservoir("main_source", "", 0, "main_source_0", 0);
         DeliverySite* destination = new DeliverySite("main_deliver", 0, "main_delivery_0", 0, 0);
         std::vector<GraphNode*> vertices;
         std::vector<WaterReservoir*> reservoirs;

@@ -13,7 +13,7 @@
 
 class GraphNode {
     public:
-        GraphNode(int id, std::string  code);
+        GraphNode(int id, std::string  code, bool available);
 
         const int& getID() const;
         const std::string& getCode() const;
@@ -23,14 +23,18 @@ class GraphNode {
         void setVisited(bool status);
         void setPath(Pipeline* path);
         Pipeline *getPath();
-        virtual bool isAvailable(); //meant to be overriden
+        virtual bool isAvailable();
+        virtual void setAvailable(bool a);
 
 private:
         int id_;
         std::string code_;
         std::vector<Pipeline*> pipes_;
+        std::vector<Pipeline*> incomingPipes;
+        std::vector<Pipeline*> outgoingPipes;
         bool visited = false;
         Pipeline* path = nullptr;
+        bool available;
 };
 
 #endif //DA_GRAPHNODE_H
