@@ -1,10 +1,18 @@
-#include <iostream>
+/**
+ * @file main.cpp
+ *
+ * @brief This file contains the main program entry point and menu functions for flow optimization.
+ */
 
-#include "CSVReader.h"
-#include "OptimizeFlow.h"
-#include <iomanip>
-#include <vector>
+#include <iostream> // Input/output stream library
+#include "CSVReader.h" // CSVReader header file
+#include "OptimizeFlow.h" // Flow optimization header file
+#include <iomanip> // Input/output manipulation library
+#include <vector> // Vector container library
 
+/**
+ * @brief Prints the program menu options.
+ */
 void printMenuOptions() {
     std::cout << "Flow Optimization Menu:" << std::endl;
     std::cout << "1. Reservoir Reports" << std::endl;
@@ -16,6 +24,13 @@ void printMenuOptions() {
     std::cout << "7. Restore Original Settings" << std::endl;
     std::cout << "8. Exit" << std::endl;
 }
+
+/**
+ * @brief Prints reports based on specified report type ("Reservoir"; "Cities"; "Pipes" or "Pumping Stations").
+ *
+ * @param reportType Type of report to print.
+ * @param graph Pointer to the graph object.
+ */
 
 void printReport(const std::string& reportType, Graph* graph) {
     std::cout << reportType << " reports: " << std::endl;
@@ -103,6 +118,12 @@ void printReport(const std::string& reportType, Graph* graph) {
     }
 }
 
+/**
+ * @brief Removes reservoirs based on user input.
+ *
+ * @param graph Pointer to the graph object to be altered.
+ */
+
 void removeReservoirsMenu(Graph* graph){
     bool menuOpen = true;
         while(menuOpen) {
@@ -144,6 +165,12 @@ void removeReservoirsMenu(Graph* graph){
             }
         }
 }
+
+/**
+ * @brief Removes pipelines based on user input.
+ *
+ * @param graph Pointer to the graph object to be altered.
+ */
 
 void removePipelinesMenu(Graph* graph) {
     bool menuOpen = true;
@@ -236,6 +263,12 @@ void removePipelinesMenu(Graph* graph) {
     }
 }
 
+/**
+ * @brief Removes pumping stations based on user input.
+ *
+ * @param graph Pointer to the graph object to be altered.
+ */
+
 void removePumpingStationsMenu(Graph* graph) {
     bool menuOpen = true;
 
@@ -280,6 +313,12 @@ void removePumpingStationsMenu(Graph* graph) {
             }
         }
     }
+
+/**
+ * @brief Removes entities (reservoirs, pipelines, or pumping stations) by calling their respective remove function and based on user input.
+ *
+ * @param graph Pointer to the graph object to be altered.
+ */
 
 void removeEntitiesMenu(Graph* graph){
     bool menuOpen = true;
@@ -353,6 +392,11 @@ void removeEntitiesMenu(Graph* graph){
     }
 }
 
+/**
+ * @brief Displays the main menu and handles user input.
+ *
+ * @param graph Pointer to the graph object.
+ */
 
 void menu(Graph* graph) {
     printMenuOptions();
@@ -401,6 +445,12 @@ void menu(Graph* graph) {
         }
     }
 }
+
+/**
+ * @brief Main function, reads the necessary information files and constructs an user interface to use the program functionalities.
+ *
+ * @return Exit status of the program.
+ */
 
 int main() {
     std::string reservoir_filename = "./data/Reservoirs_Madeira.csv";
