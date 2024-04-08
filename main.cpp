@@ -1,16 +1,11 @@
 #include <iostream>
-#include <fstream>
 
 #include "CSVReader.h"
-#include "Graph.h"
 #include "OptimizeFlow.h"
 #include <iomanip>
+#include <vector>
 
-void clearScreen() {
-    std::cout << "\033[2J\033[H";
-}
-
-void printMenuOptions(){
+void printMenuOptions() {
     std::cout << "Flow Optimization Menu:" << std::endl;
     std::cout << "1. Reservoir Reports" << std::endl;
     std::cout << "2. Cities Reports" << std::endl;
@@ -18,43 +13,9 @@ void printMenuOptions(){
     std::cout << "4. Pumping Stations Reports" << std::endl;
     std::cout << "5. Execute Edmonds-Karp Algorithm" << std::endl;
     std::cout << "6. Reliability and Sensitivity to Failures" << std::endl;
-    std::cout << "7. Exit" << std::endl;
+    std::cout << "7. Restore Original Settings" << std::endl;
+    std::cout << "8. Exit" << std::endl;
 }
-
-
-#include <iostream>
-#include <iomanip>
-#include <vector>
-#include "Graph.h" // Include necessary headers for accessing graph data
-
-/*
-void printReport(const std::string& reportType, Graph* graph) {
-    std::cout << reportType << " reports: " << std::endl;
-    std::vector<std::string> headers;
-    std::vector<std::vector<std::string>> data;
-
-    if (reportType == "Reservoir") {
-        std::cout << std::setw(15) << std::left << "Reservoir ID"
-                  << std::setw(10) << std::left << "Code"
-                  << std::setw(30) << std::left << "Name"
-                  << std::setw(30) << std::left << "Municipality"
-                  << std::setw(15) << std::left << "Max delivery" << std::endl;
-        for (auto reservoir : graph->getReservoirs()) {
-            std::cout << std::setw(15) << std::left << reservoir->getID()
-                      << std::setw(10) << std::left << reservoir->getCode()
-                      << std::setw(30) << std::left << reservoir->getName()
-                      << std::setw(30) << std::left << reservoir->getMunicipality()
-                      << std::setw(15) << std::left << reservoir->getMaxDelivery() << std::endl;
-        }
-    } else if (reportType == "Cities") {
-
-    } else if (reportType == "Pipes") {
-
-    } else {
-        std::cout << "Invalid report type." << std::endl;
-        return;
-    }
-}*/
 
 void printReport(const std::string& reportType, Graph* graph) {
     std::cout << reportType << " reports: " << std::endl;
@@ -87,7 +48,7 @@ void printReport(const std::string& reportType, Graph* graph) {
             std::cout << std::setw(10) << std::left << city->getID()
                       << std::setw(10) << std::left << city->getCode()
                       << std::setw(20) << std::left << city->getCityName()
-                    << std::fixed << std::setprecision(0) // Set fixed-point format with precision 0 . needed for large populations i.e. Lisboa
+                      << std::fixed << std::setprecision(0) // Set fixed-point format with precision 0 . needed for large populations i.e. Lisboa
                       << std::setw(15) << std::left << city->getPopulation()
                       << std::setw(15) << std::left << city->getDemand()
                       << std::setw(20) << std::left << city->getWaterReceive() << std::endl;
@@ -115,7 +76,7 @@ void printReport(const std::string& reportType, Graph* graph) {
                   << std::setw(10) << std::left << "Available";
 
         for (auto station : graph->getAllVertex()) {
-            PumpingStation *pumpingStation = dynamic_cast<PumpingStation *>(station);
+            auto *pumpingStation = dynamic_cast<PumpingStation *>(station);
 
             if(pumpingStation != nullptr){
                 std::cout << std::setw(5) << std::left << pumpingStation->getID()
@@ -144,10 +105,7 @@ void printReport(const std::string& reportType, Graph* graph) {
 
 void removeReservoirsMenu(Graph* graph){
     bool menuOpen = true;
-
-    while(menuOpen) {
-        int choice;
-        while(true) {
+        while(menuOpen) {
             printReport("Reservoir",graph);
             std::cout << "Reservoir ID: ";
             int reservoirId;
@@ -182,13 +140,9 @@ void removeReservoirsMenu(Graph* graph){
             char anotherChoice;
             std::cin >> anotherChoice;
             if (anotherChoice == 'n' || anotherChoice == 'N') {
-                break; // Exit the inner loop
+                menuOpen = false; // Exit the inner loop
             }
         }
-        printReport("Reservoir",graph);
-        break;
-    }
-
 }
 
 void removePipelinesMenu(Graph* graph) {
@@ -277,7 +231,7 @@ void removePipelinesMenu(Graph* graph) {
         char anotherChoice;
         std::cin >> anotherChoice;
         if (anotherChoice == 'n' || anotherChoice == 'N') {
-            break; // Exit the loop
+            menuOpen = false; // Exit the loop
         }
     }
 }
@@ -286,8 +240,6 @@ void removePumpingStationsMenu(Graph* graph) {
     bool menuOpen = true;
 
     while (menuOpen) {
-        int choice;
-        while (true) {
             printReport("Pumping Station", graph);
             std::cout << "Pumping Station ID: ";
             int stationId;
@@ -295,7 +247,7 @@ void removePumpingStationsMenu(Graph* graph) {
 
             bool stationFound = false;
             for (auto station : graph->getAllVertex()) {
-                PumpingStation* pumpingStation = dynamic_cast<PumpingStation*>(station);
+                auto* pumpingStation = dynamic_cast<PumpingStation*>(station);
 
                 if (station->getID() == stationId && pumpingStation != nullptr) {
                     stationFound = true;
@@ -324,63 +276,80 @@ void removePumpingStationsMenu(Graph* graph) {
             char anotherChoice;
             std::cin >> anotherChoice;
             if (anotherChoice == 'n' || anotherChoice == 'N') {
-                break; // Exit the inner loop
+                menuOpen = false; // Exit the inner loop
             }
         }
-        printReport("Pumping Station", graph);
-        break;
     }
-}
 
 void removeEntitiesMenu(Graph* graph){
-    char entityType;
-    std::cout << "Do you want to remove a pumping station (P), pipe (I), or reservoir (R)? ";
-    std::cin >> entityType;
+    bool menuOpen = true;
+    while(menuOpen) {
+        char entityType;
+        std::cout << "Do you want to remove a pumping station (P), pipe (I), or reservoir (R)?";
+        std::cin >> entityType;
 
-    OptimizeFlow().edmondsKarp(graph,graph->getSource(),graph->getDestination());
+        OptimizeFlow().edmondsKarp(graph, graph->getSource(), graph->getDestination());
 
-    std::vector<DeliverySite*> cities = graph->getCities();
-    std::vector<DeliverySite*> citiesCopy = graph->getCities();
-    std::vector<std::tuple<std::string, int, int>> affectedCitiesInfo;
-
-    switch (entityType) {
-        case 'P':
-        case 'p':
-            removePumpingStationsMenu(graph);
-            break;
-        case 'I':
-        case 'i':
-            removePipelinesMenu(graph);
-            break;
-        case 'R':
-        case 'r':
-            removeReservoirsMenu(graph);
-            break;
-        default:
-            std::cout << "Invalid option.\n";
-            break;
-    }
-
-    OptimizeFlow().edmondsKarp(graph,graph->getSource(),graph->getDestination());
-
-    for (size_t i = 0; i < cities.size(); ++i) {
-        double originalCityFlow = citiesCopy[i]->getWaterReceive();
-        double newCityFlow = cities[i]->getWaterReceive();
-        if (originalCityFlow != newCityFlow) {
-            affectedCitiesInfo.push_back(std::make_tuple(cities[i]->getCityName(), originalCityFlow, newCityFlow));
+        std::vector<DeliverySite *> citiesBefore;
+        for (DeliverySite *site: graph->getCities()) {
+            citiesBefore.push_back(new DeliverySite(*site)); //deepcopy of city entities
         }
-    }
 
-    if(affectedCitiesInfo.size()>0){std::cout << "List Of Affected Cities" << std::endl;
+        std::vector<std::tuple<std::string, int, int>> affectedCitiesInfo;
+        affectedCitiesInfo.clear();
 
-    std::cout << std::setw(15) << std::left << "Affected City"
-              << std::setw(15) << std::left << "Original Flow"
-              << std::setw(15) << std::left << "New Flow" << std::endl;}
+        switch (entityType) {
+            case 'P':
+            case 'p':
+                removePumpingStationsMenu(graph);
+                break;
+            case 'I':
+            case 'i':
+                removePipelinesMenu(graph);
+                break;
+            case 'R':
+            case 'r':
+                removeReservoirsMenu(graph);
+                break;
+            default:
+                std::cout << "Invalid option.\n";
+                break;
+        }
 
-    for (auto info : affectedCitiesInfo) {
-        std::cout << std::setw(15) << std::left << std::get<0>(info)
-                  << std::setw(15) << std::left << std::get<1>(info)
-                  << std::setw(15) << std::left << std::get<2>(info) << std::endl;
+        OptimizeFlow().edmondsKarp(graph, graph->getSource(),
+                                   graph->getDestination()); //run algorithm after alterations
+
+        std::vector<DeliverySite *> citiesAfter(graph->getCities());
+
+        for (size_t i = 0; i < citiesBefore.size(); ++i) {
+            double originalCityFlow = citiesBefore[i]->getWaterReceive();
+            double newCityFlow = citiesAfter[i]->getWaterReceive();
+            if (originalCityFlow != newCityFlow) {
+                affectedCitiesInfo.emplace_back(
+                        std::make_tuple(citiesBefore[i]->getCityName(), originalCityFlow, newCityFlow));
+            }
+        }
+
+        if (!affectedCitiesInfo.empty()) {
+
+            std::cout << "List Of Affected Cities" << std::endl;
+
+            std::cout << std::setw(15) << std::left << "Affected City"
+                      << std::setw(15) << std::left << "Original Flow"
+                      << std::setw(15) << std::left << "New Flow" << std::endl;
+
+            for (auto info: affectedCitiesInfo) {
+                std::cout << std::setw(15) << std::left << std::get<0>(info)
+                          << std::setw(15) << std::left << std::get<1>(info)
+                          << std::setw(15) << std::left << std::get<2>(info) << std::endl;
+            }
+        }
+        std::cout << "Do you want to add/remove another entity? (y/n): ";
+        char anotherChoice;
+        std::cin >> anotherChoice;
+        if (anotherChoice == 'n' || anotherChoice == 'N') {
+            menuOpen = false; // Exit the outer loop
+        }
     }
 }
 
@@ -397,22 +366,32 @@ void menu(Graph* graph) {
         switch (choice) {
             case 1:
                 printReport("Reservoir", graph);
+                printMenuOptions();
                 break;
             case 2:
                 printReport("Cities", graph);
+                printMenuOptions();
                 break;
             case 3:
                 printReport("Pipes", graph);
+                printMenuOptions();
                 break;
             case 4:
                 printReport("Pumping Station",graph);
+                printMenuOptions();
             case 5:
                 OptimizeFlow().edmondsKarp(graph, graph->getSource(), graph->getDestination());
+                printMenuOptions();
                 break;
             case 6:
                 removeEntitiesMenu(graph);
+                printMenuOptions();
                 break;
             case 7:
+                graph->restoreOriginalSettings();
+                printMenuOptions();
+                break;
+            case 8:
                 std::cout << "Exiting..." << std::endl;
                 menuOpen = false;
                 break;
@@ -429,7 +408,7 @@ int main() {
     std::string cities_filename = "./data/Cities_Madeira.csv";
     std::string pipes_filename = "./data/Pipes_Madeira.csv";
 
-    Graph* graph = new Graph;
+    auto* graph = new Graph;
 
     // Read reservoirs data
     CSVReader reservoirReader(reservoir_filename);

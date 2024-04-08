@@ -121,6 +121,12 @@ class Graph {
         return nullptr;
     }
 
+    void restoreOriginalSettings(){
+            for(auto vertex : vertices){
+                vertex->setAvailable(true);
+            }
+        }
+
     private:
         WaterReservoir* source = new WaterReservoir("main_source", "", 0, "main_source_0", 0);
         DeliverySite* destination = new DeliverySite("main_deliver", 0, "main_delivery_0", 0, 0);
