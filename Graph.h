@@ -42,9 +42,12 @@ class Graph {
             GraphNode* s = findVertexByCode(source_code);
             GraphNode* d = findVertexByCode(destination_code);
             if(s != nullptr && d != nullptr){
-                auto *pipe = new Pipeline(s, d, capacity, direction, true);
+                auto *pipe = new Pipeline(s, d, capacity, true);
                 if(!direction){
-                    d->addPipe(pipe);
+                    auto *pipeBro = new Pipeline(d, s, capacity, true);
+                    d->addPipe(pipeBro);
+                    pipeBro->setBrotherPipe(pipe);
+                    pipe->setBrotherPipe(pipeBro);
                 }
                 s->addPipe(pipe);
                 pipes.push_back(pipe);
@@ -54,7 +57,7 @@ class Graph {
         }
         void addMainPipe(GraphNode* source, GraphNode* destination, double capacity) {
             if(source != nullptr && destination != nullptr){
-                auto *pipe = new Pipeline(source, destination, capacity, 1, true);
+                auto *pipe = new Pipeline(source, destination, capacity, true);
                 source->addPipe(pipe);
                 pipes.push_back(pipe);
             } else {

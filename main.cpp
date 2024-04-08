@@ -80,7 +80,7 @@ void printReport(const std::string& reportType, Graph* graph) {
             std::cout << std::setw(15) << std::left << pipe->getSource()->getCode()
                       << std::setw(20) << std::left << pipe->getDestination()->getCode()
                       << std::setw(15) << std::left << pipe->getCapacity()
-                      << std::setw(15) << std::left << pipe->getDirection()
+                      << std::setw(15) << std::left << pipe->getBrotherPipe()
                       << std::setw(10) << std::left << pipe->getFlow()
                       << std::setw(20) << std::left << pipe->getCapacity() - pipe->getFlow()
                       << std::setw(10) << std::left << (pipe->isAvailable() ? "Yes" : "No") << std::endl;

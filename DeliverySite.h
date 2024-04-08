@@ -20,8 +20,6 @@ class DeliverySite : public GraphNode{
 
     private:
         std::string city;
-        int id;
-        std::string code;
         double demand;
         double population;
         double receive = 0;

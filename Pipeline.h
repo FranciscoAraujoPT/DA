@@ -11,12 +11,13 @@ class GraphNode;
 
 class Pipeline{
     public:
-        Pipeline(GraphNode* source, GraphNode* destination, double capacity, bool direction, bool available);
+        Pipeline(GraphNode* source, GraphNode* destination, double capacity, bool available);
 
         GraphNode * getSource() ;
         GraphNode * getDestination() ;
         double getCapacity() const;
-        bool getDirection() const;
+        Pipeline* getBrotherPipe() const;
+        void setBrotherPipe(Pipeline* brother);
         double getFlow() const;
         bool isAvailable() const;
         void setAvailable(bool a);
@@ -27,7 +28,7 @@ private:
         GraphNode *source; // Source service (water reservoir, pumping station, or delivery site)
         GraphNode *destination; // Target service (water reservoir, pumping station, or delivery site)
         double capacity; // Maximum capacity of the pipe
-        bool direction; // Direction of connection (true - unidirectional, false - bidirectional)
+        Pipeline* pipeBro = nullptr; // Direction of connection (true - unidirectional, false - bidirectional)
         double flow = 0;
         bool available = true;
 };
