@@ -9,25 +9,21 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <utility>
+#include <locale>
 
-#include "WaterReservoir.h"
-#include "PumpingStation.h"
-#include "Pipeline.h"
-#include "DeliverySite.h"
-#include "Graph.h"
+#include "Location.h"
 
-class CSVReader {
+class CSVReader
+{
 private:
-    std::string filename;
-    char delimiter;
-public:
-    explicit CSVReader(std::string  filename, char delimiter = ',');
+    std::wstring filename;
+    wchar_t delimiter;
 
-    void readReservoirData(Graph* graph);
-    void readPipesData(Graph* graph);
-    void readCitiesData(Graph* graph);
-    void readStationsData(Graph* graph);
+public:
+    explicit CSVReader(std::wstring filename, wchar_t delimiter = ',');
+
+    void readLocationData(Graph<Location> *cityGraph);
+    void readDistanceData(Graph<Location> *cityGraph);
 };
 
-#endif //DA_CSVREADER_H
+#endif // DA_CSVREADER_H
